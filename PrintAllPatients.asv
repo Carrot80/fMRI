@@ -1,0 +1,48 @@
+function PrintAllPatients 
+    
+    PatientFolder = 'L:\kirsten_thesis\data\patients\';
+    PatientList = dir( PatientFolder );
+    
+    for i = 1 : size (PatientList)
+        if ( 0 == strcmp( PatientList(i,1).name, '.') && 0 == strcmp( PatientList(i,1).name, '..') && 0 == strcmp( PatientList(i,1).name, 'Pat_01_13021km'))
+            PatientPath = strcat(PatientFolder, PatientList(i,1).name) ;
+            PatientName = PatientList(i,1).name  ;
+            kh_display_and_print( PatientPath, PatientName  );
+        end
+    end
+end
+
+
+  function kh_display_and_print(PatientPath, PatientName)
+
+    PathFluency = strcat (PatientPath, '\fMRI\nifti\Fluency\') ; 
+    PathVG = strcat (PatientPath, '\fMRI\nifti\Verbgeneration\') ; 
+    PathMRI = strcat (PatientPath, '\MRI\') ;
+
+    DirFilesFluency = dir(fullfile(PathFluency, '*.nii'));
+    DirPathVG = dir(fullfile(PathVG, '*.nii'));
+    DirPathMRI = dir(fullfile(PathMRI, '*.nii'));  
+
+    cd(PathFluency)   
+    
+    files = ls('*.nii')
+    
+   
+for i=1:10:length(files)
+    spm_check_registration(char(f{i:min(i+9,numel(f))}));
+    spm_print;
+end
+% for i=1:10:numel(f)
+    spm_check_registration(char(f{3:min(3+9,numel(f))}));
+    spm_print;
+    
+% test
+%     rootDir = [pwd filesep]
+%     ImageDir = 'fMRI/nifti/Verbgeneration/'
+%     subjects = 'Pat_01_13021km'
+    
+    test = {'f1009899789-0008-00001-000001-01.nii', 'f1009899789-0008-00002-000002-01.nii'}
+    spm_check_registration(char(test)) % => funtioniert
+  end
+  
+  
