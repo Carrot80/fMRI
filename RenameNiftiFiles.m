@@ -1,40 +1,56 @@
 % Umbenennen von niftis
 
-function ForAllPat
+
+function fmri_for_all_subjects  
+
+    PatientFolder = 'D:\kirsten_thesis\data\patients\';
+    ControlsFolder = 'D:\kirsten_thesis\data\controls\';
     
-    PatientFolder = 'C:\Kirsten\DatenDoktorarbeit\Patienten\' ;
-    PatientList = dir( PatientFolder );
-    VolunteerFolder = 'C:\Kirsten\DatenDoktorarbeit\Kontrollen\';
-    VolunteerList = dir( VolunteerFolder );
+    fmriSelectSubjects (PatientFolder)
+%     fmriSelectSubjects (ControlsFolder)
     
-    for i = 1 : size (VolunteerList)
-        if ( 0 == strcmp( VolunteerList(i,1).name, '.') && 0 == strcmp( VolunteerList(i,1).name, '..'))
-            RenameFiles2( strcat(VolunteerFolder, VolunteerList(i,1).name), VolunteerList(i,1).name  );
+end
+
+
+function fmriSelectSubjects (Mainfolder)
+    
+    List = dir( Mainfolder );
+    
+    for i = 1 : size (List)
+        if ( 0 == strcmp( List(i,1).name, '.') && 0 == strcmp( List(i,1).name, '..'))
+            PathVG = strcat ( Mainfolder, List(i,1).name, filesep, 'fMRI/nifti/Verbgeneration' )  ;
+            PathFluency = strcat ( Mainfolder, List(i,1).name, filesep, 'fMRI/nifti/Fluency') ;
+            RenameFiles2( strcat(Mainfolder, List(i,1).name), List(i,1).name, PathVG, 'VG'  );
+            RenameFiles2( strcat(Mainfolder, List(i,1).name), List(i,1).name, PathFluency, 'Fluency'  );
         end
     end
 end
 
 
 
-function RenameFiles2 (PatientPath, PatientName)
+function RenameFiles2 (PatientPath, PatientName, Path, Task)
 
  % Reject all other patients but this one:
-        if ( 0 == strcmp (PatientPath, 'C:\Kirsten\DatenDoktorarbeit\Kontrollen\zzz_ca_Achtermann'))
-            return;
-        end
+%         if ( 0 == strcmp (PatientPath, 'D:\kirsten_thesis\data\patients\Pat_01_13021km'))
+%             return;
+%         end
 
-    PathVerbGen = strcat (PatientPath, '\', 'fMRI\nifti', '\', 'test')      
-          % Get the selected file data
    
-    dirData = dir(PathVerbGen);
-           
+    % Get the selected file data :
+    
+    dirData = dir(fullfile(Path, filesep,'f*.nii'));
+    
+    fn = strcat(Path, filesep, 'f_', Task, '_', PatientName, '_001.nii')
+    
+    if exist (fn, 'file')
+        return
+    end
+    
             for i = 1 : length(dirData)
-               if 0 == strcmp (dirData(i,1).name, '.') && 0 == strcmp (dirData(i,1).name, '..')
-               FileName = dirData(i,1).name ;
-               num = i-2 ;
-               NewName = sprintf ('f_Verbgen_%s_%03.0f.nii',  PatientName, num ) ; 
-               movefile(dirData(i,1).name, NewName);        % Rename the file
-               end
+                
+               num = i ;
+               NewName = sprintf ('f_%s_%s_%03.0f.nii',  Task, PatientName, num ) ; 
+               movefile( strcat(Path, filesep, dirData(i,1).name), strcat ( Path, filesep, NewName));    
            end
 
 end

@@ -1,8 +1,8 @@
 
 function ImageCheckMain  
 
-    PatientFolder = 'L:\kirsten_thesis\data\patients\';
-    ControlsFolder = 'L:\kirsten_thesis\data\controls\'
+    PatientFolder   = 'L:\kirsten_thesis\data\patients\';
+    ControlsFolder  = 'L:\kirsten_thesis\data\controls\';
     
     ImageCheck (PatientFolder)
     ImageCheck (ControlsFolder)
@@ -30,8 +30,8 @@ end
 
   function kh_display_and_print(SubjectPath, TaskPath)
 
-    DirFilesTask = dir(fullfile(TaskPath, '*.nii')); 
-    dir_files       = dir(fullfile(TaskPath,'*.nii' ));
+    DirFilesTask    = dir(fullfile(TaskPath, '*.nii')); 
+    dir_files       = dir(fullfile(TaskPath, '*.nii' ));
     
     if exist (strcat(TaskPath, 'ImageCheck.ps'), 'file')
        return
