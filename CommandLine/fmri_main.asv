@@ -1,7 +1,0 @@
-function fmri_main (SubjectPath, SubjectName)
-
-fmri_select_folders
-kh_realign_reslice (SubjectPath, SubjectName)
-
-
-end

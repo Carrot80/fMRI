@@ -46,7 +46,7 @@ function fmriMain (SubjectName, Path)
         end
  
 
-kh_realign_reslice (Path.Nifti.VG)
-kh_realign_reslice (Path.Nifti.Fluency)
+kh_realign_reslice (Path.Nifti.VG, SubjectName, 'VG')
+kh_realign_reslice (Path.Nifti.Fluency, SubjectName, 'Fluency')
 
 end
