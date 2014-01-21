@@ -20,13 +20,18 @@ function fmriSelectSubjects (Mainfolder)
           SubjectName = List(i,1).name  
           
           [Path] = MakePath(SubjectPath, SubjectName)
-          fmriMain (SubjectName, Path)
+          CopyStructImage (SubjectName, Path)
           
       end
  end
  
 end
 
+function CopyStructImage(SubjectName, Path)
+
+    mkdir strcat(Path.Nifti.MRI , 
+
+end 
      
 function [Path] = MakePath(SubjectPath, SubjectName)
     
@@ -38,16 +43,3 @@ function [Path] = MakePath(SubjectPath, SubjectName)
         
  end
 
-function fmriMain (SubjectName, Path)
-
- % Reject all other patients but this one:
-        if ( 1 == strcmp (Path.Subject, 'D:\kirsten_thesis\data\patients\Pat_01_13021km'))
-            return;
-        end
- 
-% kh_realign_reslice (Path.Nifti.VG, SubjectName, 'VG')
-% kh_realign_reslice (Path.Nifti.Fluency, SubjectName, 'Fluency')
-
-kh_coregistration (Path.Nifti.VG, SubjectName, 'VG')
-
-end
