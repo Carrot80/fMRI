@@ -6,9 +6,9 @@ function kh_realign_reslice (Path, SubjectName, Task)
 cd (Path)
 
 fn = strcat ( Path, filesep, 'rf_', Task, '_', SubjectName, '_001.nii')
-if exist (fn, 'file')
-    return
-end
+% if exist (fn, 'file')
+%     return
+% end
 
 P = spm_select('ExtList', Path, '^f.*'); % Extlist = Extension list option
 

@@ -29,8 +29,17 @@ end
 
 function CopyStructImage(SubjectName, Path)
 
-    mkdir strcat(Path.Nifti.MRI , 
-
+    NewFolder = strcat(Path.Nifti.MRI, filesep, 'CopyOfAnatomical' ) ;
+    if ~exist(NewFolder) 
+    mkdir (NewFolder)
+    end
+    OldFile = strcat(Path.Nifti.MRI, filesep, 's_', SubjectName, '.nii')
+    NewFile = strcat (NewFolder, filesep, 's_', SubjectName, '.nii')
+    
+    if ~exist(NewFile)
+         copyfile(OldFile, NewFile)
+    end
+    
 end 
      
 function [Path] = MakePath(SubjectPath, SubjectName)

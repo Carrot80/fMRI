@@ -3,10 +3,10 @@
 function DicomImportMain  
 
     PatientFolder = 'L:\kirsten_thesis\data\patients\';
-    ControlsFolder = 'L:\kirsten_thesis\data\controls\'
+%     ControlsFolder = 'L:\kirsten_thesis\data\controls\'
     
     DicomImport (PatientFolder)
-    DicomImport (ControlsFolder)
+%     DicomImport (ControlsFolder)
     
 end
 
