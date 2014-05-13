@@ -2,11 +2,11 @@
 
 function fmri_for_all_subjects  
 
-%     PatientFolder = 'D:\kirsten_thesis\data\patients\';
-    ControlsFolder = 'D:\kirsten_thesis\data\controls\';
+    PatientFolder = 'D:\kirsten_thesis\data\patients\';
+%     ControlsFolder = 'D:\kirsten_thesis\data\controls\';
     
-%     fmriSelectSubjects (PatientFolder)
-    fmriSelectSubjects (ControlsFolder)
+    fmriSelectSubjects (PatientFolder)
+%     fmriSelectSubjects (ControlsFolder)
     
 end
 
@@ -15,7 +15,7 @@ function fmriSelectSubjects (Mainfolder)
 
     List = dir( Mainfolder );
 
-     for i = 3 : size (List)
+     for i = 4 %: size (List)
       if ( 0 == strcmp( List(i,1).name, '.') && 0 == strcmp( List(i,1).name, '..') )
           SubjectPath = strcat(Mainfolder, List(i,1).name) ;
           SubjectName = List(i,1).name  
@@ -27,10 +27,10 @@ function fmriSelectSubjects (Mainfolder)
 %           kh_smooth (SubjectName, Path, 'VG') % kernel of 3 3 3 
 %           kh_modelspecification (SubjectName, Path, 'VG', 'Verbgeneration') 
 %           kh_estimation (SubjectName, Path, 'VG','Verbgeneration')
-%           kh_resultsreport (SubjectName, Path, 'VG','Verbgeneration')
-%           kh_Results_Report (SubjectName, Path, 'VG','Verbgeneration')
-%           kh_normalizeTmap (SubjectName, Path, 'VG','Verbgeneration')
-            kh_LateralityIndex_Broca (SubjectName, Path, 'VG','Verbgeneration') % method.thr5=1 (Li-curves, voxel value)
+%           kh_contrast_manager (SubjectName, Path, 'VG','Verbgeneration')
+          kh_Results_Report (SubjectName, Path, 'VG','Verbgeneration')
+          kh_normalizeTmap (SubjectName, Path, 'VG','Verbgeneration')
+            
 
       end
  end
@@ -44,7 +44,7 @@ if exist (fn, 'file')
     return
 end
 
-load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\01_Realign_Reslice.mat')
+load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\01_Realign_Reslice.mat')
 
 cd(strcat(Path.Nifti.(Task)))
 
@@ -64,7 +64,7 @@ end
 
 function kh_coreg (SubjectName, Path, Task)
 
-load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\02_Coreg_estimate_reslice.mat')
+load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\02_Coreg_estimate_reslice.mat')
 
 cd(strcat(Path.Nifti.(Task)))
 
@@ -83,7 +83,7 @@ end
 
 function kh_segment (SubjectName, Path, Task)
     
-load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\03_Segment.mat')
+load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\03_Segment.mat')
 
 cd(strcat(Path.Nifti.(Task)))
 
@@ -97,7 +97,7 @@ end
 function kh_smooth (SubjectName, Path, Task)
 
 
-    load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\04_Smooth.mat')
+    load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\04_Smooth.mat')
     cd(strcat(Path.Nifti.(Task)))
 
     DirFilesTask    = dir(fullfile(Path.Nifti.(Task), 'rf*.nii')); 
@@ -112,18 +112,30 @@ function kh_smooth (SubjectName, Path, Task)
 
 end
 
+
 function kh_modelspecification (SubjectName, Path, Task, TaskFullName) 
 
- load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\05_Modelspecification.mat')
+ load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\05_Modelspecification.mat')
  cd(strcat(Path.Nifti.(Task)))
 
  matlabbatch{1, 1}.spm.stats.fmri_spec.dir{1, 1} = strcat(Path.Subject, filesep, 'fMRI', filesep, 'statistics', filesep, TaskFullName, filesep);
 
  DirFilesTask    = dir(fullfile(Path.Nifti.(Task), 'srf*.nii')); 
  
-for j=1:length(DirFilesTask)
- matlabbatch{1, 1}.spm.stats.fmri_spec.sess.scans{j, 1}=strcat(Path.Nifti.(Task), filesep, DirFilesTask(j,1).name, ',1')
-end
+ if 1==strcmp(SubjectName,'Pat_02_13008rh')
+     
+     for j=1:210
+         matlabbatch{1, 1}.spm.stats.fmri_spec.sess.scans{j, 1}=strcat(Path.Nifti.(Task), filesep, DirFilesTask(j,1).name, ',1')
+     end
+     
+ else
+     for j=1:length(DirFilesTask)
+         matlabbatch{1, 1}.spm.stats.fmri_spec.sess.scans{j, 1}=strcat(Path.Nifti.(Task), filesep, DirFilesTask(j,1).name, ',1')
+     end
+     
+ end
+ 
+
 
 if 1==strcmp(SubjectName,'zzz_ht')
     
@@ -138,6 +150,21 @@ if 1==strcmp(SubjectName,'zzz_sf')
 
 end
 
+if 1==strcmp(SubjectName,'Pat_01_13021km')
+    
+    matlabbatch{1, 1}.spm.stats.fmri_spec.sess.cond(1, 1).onset = [ 1; 21; 41; 61; 81; 101; 121; 141; 161 ] ;
+    matlabbatch{1, 1}.spm.stats.fmri_spec.sess.cond(1, 2).onset =  [ 11; 31; 51; 71; 91; 111; 131; 151] ;
+
+end
+
+if 1==strcmp(SubjectName,'Pat_21_13056hz')
+    
+    matlabbatch{1, 1}.spm.stats.fmri_spec.sess.cond(1, 1).onset = [ 1; 21; 41; 61; 81; 101; 121; 141; 161 ] ;
+    matlabbatch{1, 1}.spm.stats.fmri_spec.sess.cond(1, 2).onset =  [ 11; 31; 51; 71; 91; 111; 131; 151] ;
+
+end
+
+
 matlabbatch{1, 1}.spm.stats.fmri_spec.sess.multi_reg = strcat('rp_f_', Task, '_', SubjectName, '_001.txt')
     
 spm_jobman('run', matlabbatch)
@@ -146,9 +173,10 @@ spm_jobman('run', matlabbatch)
 
 end
 
+
 function kh_estimation (SubjectName, Path, Task, TaskFullName)
 
-load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\06_Modelestimation.mat')
+load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\06_Modelestimation.mat')
 
 PathStatistics = strcat(Path.Subject, filesep, 'fMRI', filesep, 'statistics', filesep, TaskFullName, filesep);
 cd(PathStatistics)
@@ -161,9 +189,10 @@ spm_jobman('run', matlabbatch)
 
 end
 
-function kh_resultsreport (SubjectName, Path, Task , TaskFullName)
 
-load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\07_Contrast_Manager.mat')
+function kh_contrast_manager (SubjectName, Path, Task , TaskFullName)
+
+load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\07_Contrast_Manager.mat')
 PathStatistics = strcat(Path.Subject, filesep, 'fMRI', filesep, 'statistics', filesep, TaskFullName, filesep);
 cd(PathStatistics)
 
@@ -174,9 +203,10 @@ spm_jobman('run', matlabbatch)
 
 end
 
+
 function  kh_Results_Report (SubjectName, Path, Task , TaskFullName)
 
-load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\08_Results_Report.mat')
+load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\08_Results_Report.mat')
 PathStatistics = strcat(Path.Subject, filesep, 'fMRI', filesep, 'statistics', filesep, TaskFullName, filesep);
 cd(PathStatistics)
 
@@ -187,33 +217,22 @@ spm_jobman('run', matlabbatch)
 
 end
 
+
 function kh_normalizeTmap (SubjectName, Path, Task, TaskFullName)
 
-load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\09_NormalizeTmap.mat')
+load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\09_NormalizeTmap.mat')
 PathStatistics = strcat(Path.Subject, filesep, 'fMRI', filesep, 'statistics', filesep, TaskFullName, filesep);
 cd(PathStatistics)
 
 matlabbatch{1, 1}.spm.spatial.normalise.write.subj.matname{1, 1} = strcat( Path.Subject, filesep, 'fMRI', filesep, 'nifti', filesep, TaskFullName, filesep, 's_', SubjectName, '_seg_sn.mat');
 matlabbatch{1, 1}.spm.spatial.normalise.write.subj.resample{1, 1}= strcat(PathStatistics, 'spmT_0001.img,1');
-
-
-spm_jobman('run', matlabbatch)
-
-
-end
-
-
-function kh_LateralityIndex_Broca (SubjectName, Path, Task, TaskFullName)
-
-load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\Preprocessing\10_Lateralization_Broca.mat')
-PathStatistics = strcat(Path.Subject, filesep, 'fMRI', filesep, 'statistics', filesep, TaskFullName, filesep);
-cd(PathStatistics)
-matlabbatch{1, 1}.spm.tools.LI_cfg.spmT{1, 1}=strcat(PathStatistics, 'wspmT_0001.img,1'); 
+% matlabbatch{1, 1}.spm.spatial.normalise.write.subj.resample{1, 1}= strcat(PathStatistics, 'con_0001.img,1');
 
 spm_jobman('run', matlabbatch)
 
 
 end
+
 
 
 function [Path] = MakePath(SubjectPath, SubjectName)

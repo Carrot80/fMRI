@@ -20,13 +20,17 @@ function fmriSelectSubjects (Mainfolder)
           SubjectName = List(i,1).name  
           
           [Path] = MakePath(SubjectPath, SubjectName)
-          kh_LateralityCurves (SubjectName, Path, 'Verbgeneration', 'Broca', 1 ) % no voxelcount
-          kh_LateralityCurves (SubjectName, Path,'Verbgeneration', 'Wernicke', 1 ) % 1=voxelcount; method.thr5=1 (Li-curves, voxel value)
+%           kh_LateralityCurves (SubjectName, Path, 'Verbgeneration', 'Broca', 1 ) % no voxelcount
 %           kh_LateralityCurves (SubjectName, Path,'Verbgeneration', 'Wernicke', 1 ) % 1=voxelcount; method.thr5=1 (Li-curves, voxel value)
-          kh_lateralityIndex_Bootstrap (SubjectName, Path, 'Verbgeneration', 'Broca', 1 ) 
-          kh_lateralityIndex_Bootstrap (SubjectName, Path, 'Verbgeneration', 'Wernicke', 1 )
-          
-          
+%           kh_LateralityCurves (SubjectName, Path,'Verbgeneration', 'Wernicke', 1 ) % 1=voxelcount; method.thr5=1 (Li-curves, voxel value)
+%           kh_lateralityIndex_Bootstrap (SubjectName, Path, 'Verbgeneration', 'Broca', 1 ) 
+%           kh_lateralityIndex_Bootstrap (SubjectName, Path, 'Verbgeneration', 'Wernicke', 1 )
+          kh_laterality_thr (SubjectName, Path, 'Verbgeneration', 'Broca', 3.13190158, 'p_001', 1 ) 
+          kh_laterality_thr (SubjectName, Path, 'Verbgeneration', 'Wernicke', 3.13190158, 'p_001', 1 ) % one tailed bei 198 degrees of freedom
+          kh_laterality_thr (SubjectName, Path, 'Verbgeneration', 'Broca', 2.34532833, 'p_01', 1 ) 
+          kh_laterality_thr (SubjectName, Path, 'Verbgeneration', 'Wernicke', 2.34532833, 'p_01', 1 ) 
+          kh_laterality_thr (SubjectName, Path, 'Verbgeneration', 'Broca', 1.65258577, 'p_05', 1 ) 
+          kh_laterality_thr (SubjectName, Path, 'Verbgeneration', 'Wernicke', 1.65258577, 'p_05', 1 ) 
       end
     end
  
@@ -69,6 +73,27 @@ matlabbatch{1, 1}.spm.tools.LI_cfg.outfile = strcat('LI_Bootstrap_', Mask, '.txt
 spm_jobman('run', matlabbatch)
 
 end
+
+
+function kh_laterality_thr (SubjectName, Path, TaskFullName, Mask, Thr, p, VC)
+
+load ('D:\kirsten_thesis\programs\Matlab\scripts_thesis\fMRI\CommandLine_BatchFiles\10_Lateralization_thr.mat')
+PathStatistics = strcat(Path.Subject, filesep, 'fMRI', filesep, 'statistics', filesep, TaskFullName, filesep);
+cd(PathStatistics)
+
+if exist (strcat('LI_', Mask, '_', p, '.txt'), 'file');
+    delete ( strcat('LI_', Mask, '_', p, '.txt'));
+end
+
+matlabbatch{1, 1}.spm.tools.LI_cfg.spmT{1, 1}=strcat(PathStatistics, 'wspmT_0001.img,1'); 
+matlabbatch{1, 1}.spm.tools.LI_cfg.inmask.im11{1, 1} = strcat('D:\kirsten_thesis\data\all\ROIsForAfni\AAL\', 'w',Mask, '_left_dil.nii,1');
+matlabbatch{1, 1}.spm.tools.LI_cfg.method.thr1 = Thr ;
+matlabbatch{1, 1}.spm.tools.LI_cfg.outfile = strcat('LI_', Mask, '_', p, '.txt');
+
+spm_jobman('run', matlabbatch)
+
+end
+
 
 
 function [Path] = MakePath(SubjectPath, SubjectName)
