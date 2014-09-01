@@ -1,11 +1,11 @@
 
 function fmri_for_all_subjects  
 
-    PatientFolder = 'D:\kirsten_thesis\data\patients\';
-%     ControlsFolder = 'D:\kirsten_thesis\data\controls\';
+%     PatientFolder = 'D:\kirsten_thesis\data\patients\';
+    ControlsFolder = 'D:\kirsten_thesis\data\controls\';
     
-    fmriSelectSubjects (PatientFolder)
-%     fmriSelectSubjects (ControlsFolder)
+%     fmriSelectSubjects (PatientFolder)
+    fmriSelectSubjects (ControlsFolder)
     
 end
 
@@ -15,14 +15,14 @@ function fmriSelectSubjects (Mainfolder)
 List = dir( Mainfolder );
 LI_all = [];
  
-for i = 3 :  size(List)
+for i = 1:size(List)
     if ( 0 == strcmp( List(i,1).name, '.') && 0 == strcmp( List(i,1).name, '..') )
         SubjectPath = strcat(Mainfolder, List(i,1).name) ;
         SubjectName = List(i,1).name
         
        
         [Path] = MakePath(SubjectPath, SubjectName)
-        [Inputimage,Inclusivemask,Exclusivemask,Threshold,LI,Method,VCVV,VarianceWeighting,Clustering,Sourcepath,Voxelsright,Voxelsleft,Clustersright,Clustersleft] = importfile(strcat(Path.Statistics.VG, filesep, 'LI_Wernicke_p_05.txt'),2, 2);
+        [Inputimage,Inclusivemask,Exclusivemask,Threshold,LI,Method,VCVV,VarianceWeighting,Clustering,Sourcepath,Voxelsright,Voxelsleft,Clustersright,Clustersleft] = importfile(strcat(Path.Statistics.Fluency, filesep, 'LI_Wernicke_p_001.txt'),2, 2);
         [LI_all]=kh_collect_LI (LI_all, LI, Voxelsleft, Voxelsright, i)
     end
     
@@ -276,6 +276,7 @@ function [Path] = MakePath(SubjectPath, SubjectName)
             Path.Nifti.Fluency = strcat (SubjectPath, '\', 'fMRI\nifti\Fluency') ;
             Path.Nifti.VG = strcat (SubjectPath, filesep, 'fMRI\nifti\Verbgeneration') ;
             Path.Statistics.VG = strcat(SubjectPath, filesep, 'fMRI\statistics\Verbgeneration') ;
+            Path.Statistics.Fluency = strcat(SubjectPath, filesep, 'fMRI\statistics\Fluency') ;
  end
 
 
